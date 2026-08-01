@@ -12,7 +12,13 @@ homepage = "https://github.com/SedarOlmez94/clive"
 documentation = "https://github.com/SedarOlmez94/clive#readme"
 keywords = ["ollama", "llm", "cli", "ai", "coding-assistant"]
 categories = ["command-line-utilities", "development-tools"]
-exclude = ["target/", "*.bak"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+]
 
 [[bin]]
 name = "clive"
