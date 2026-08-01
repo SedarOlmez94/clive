@@ -1280,21 +1280,42 @@ fn parse_agent_plan(raw: &str) -> Result<AgentPlan> {
 }
 
 fn extract_json_object(raw: &str) -> Result<String> {
-    if raw.trim_start().starts_with('{') {
-        return Ok(raw.trim().to_string());
-    }
-
+    let bytes = raw.as_bytes();
     let start = raw
         .find('{')
         .ok_or_else(|| anyhow!("Agent response does not contain JSON object"))?;
-    let end = raw
-        .rfind('}')
-        .ok_or_else(|| anyhow!("Agent response does not contain closing JSON brace"))?;
-    if end <= start {
-        bail!("Malformed JSON object in agent response");
+
+    let mut depth = 0usize;
+    let mut in_string = false;
+    let mut escaped = false;
+
+    for i in start..bytes.len() {
+        let c = bytes[i];
+        if in_string {
+            if escaped {
+                escaped = false;
+            } else if c == b'\\' {
+                escaped = true;
+            } else if c == b'"' {
+                in_string = false;
+            }
+            continue;
+        }
+
+        match c {
+            b'"' => in_string = true,
+            b'{' => depth += 1,
+            b'}' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Ok(raw[start..=i].trim().to_string());
+                }
+            }
+            _ => {}
+        }
     }
 
-    Ok(raw[start..=end].trim().to_string())
+    bail!("Malformed JSON object in agent response")
 }
 
 fn normalize_file_key(path: &str) -> String {
@@ -1648,7 +1669,7 @@ fn extract_updated_file(raw: &str) -> Result<String> {
         .find(start_tag)
         .ok_or_else(|| anyhow!("Model response missing <updated_file> tag"))?;
     let end = raw
-        .find(end_tag)
+        .rfind(end_tag)
         .ok_or_else(|| anyhow!("Model response missing </updated_file> tag"))?;
 
     if end <= start {
@@ -2180,6 +2201,56 @@ mod tests {
         let extracted = extract_json_object(raw).expect("json should be extracted");
         assert!(extracted.starts_with('{'));
         assert!(extracted.ends_with('}'));
+    }
+
+    #[test]
+    fn extract_json_object_ignores_trailing_prose_with_braces() {
+        let raw =
+            "{\"summary\":\"ok\",\"edits\":[],\"done\":true}\n\nNote: use `HashMap<K, V>` } here.";
+        let extracted = extract_json_object(raw).expect("json should be extracted");
+        assert_eq!(extracted, "{\"summary\":\"ok\",\"edits\":[],\"done\":true}");
+        serde_json::from_str::<AgentPlan>(&extracted).expect("extracted text must be valid JSON");
+    }
+
+    #[test]
+    fn extract_json_object_respects_braces_inside_strings() {
+        let raw = r#"prefix {"summary":"close brace } in a string","edits":[],"done":true} suffix"#;
+        let extracted = extract_json_object(raw).expect("json should be extracted");
+        let plan: AgentPlan =
+            serde_json::from_str(&extracted).expect("string braces must not break parsing");
+        assert_eq!(plan.summary, "close brace } in a string");
+    }
+
+    #[test]
+    fn extract_updated_file_keeps_content_containing_end_tag_literal() {
+        let raw =
+            "<updated_file>let doc = \"</updated_file>\";\nfn main() {}\n</updated_file> trailing";
+        let updated = extract_updated_file(raw).expect("expected updated content");
+        assert!(
+            updated.contains("fn main() {}"),
+            "content after an embedded end-tag literal must be preserved, got: {updated:?}"
+        );
+    }
+
+    #[test]
+    fn run_shell_command_reports_exit_code_and_streams() {
+        let ok = run_shell_command("printf hello").expect("command should run");
+        assert!(ok.starts_with("exit=0"), "unexpected output: {ok}");
+        assert!(ok.contains("hello"));
+
+        let fail = run_shell_command("exit 3").expect("command should run");
+        assert!(fail.starts_with("exit=3"), "unexpected output: {fail}");
+    }
+
+    #[test]
+    fn run_verify_commands_short_circuits_on_first_failure() {
+        let report = run_verify_commands(&["exit 0".to_string(), "exit 1".to_string()])
+            .expect("commands should run");
+        assert!(!report.success);
+
+        let empty = run_verify_commands(&[]).expect("no commands is success");
+        assert!(empty.success);
+        assert!(empty.output.is_empty());
     }
 
     #[test]
