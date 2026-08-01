@@ -2,6 +2,8 @@
 
 ![Clive mascot](docs/clive-mascot.png)
 
+[![Crates.io](https://img.shields.io/crates/v/clive-llm.svg)](https://crates.io/crates/clive-llm)
+[![Downloads](https://img.shields.io/crates/d/clive-llm.svg)](https://crates.io/crates/clive-llm)
 [![CI](https://github.com/SedarOlmez94/clive/actions/workflows/ci.yml/badge.svg)](https://github.com/SedarOlmez94/clive/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org/)
@@ -62,8 +64,8 @@ workflows — all running on your own machine, with no data leaving your compute
 ## Quick Start
 
 ```bash
-# 1. Install Clive from source (not yet published to crates.io)
-cargo install --path .
+# 1. Install Clive from crates.io
+cargo install clive-llm
 
 # 2. Start Ollama in the background
 clive ollama serve --detach
@@ -89,6 +91,16 @@ You do not need a separate terminal for Ollama setup once Clive is installed.
 
 ## Installation
 
+### From crates.io (recommended)
+
+```bash
+cargo install clive-llm
+```
+
+> Clive is published on crates.io under the package name **`clive-llm`** (the
+> `clive` crate name is taken by an unrelated project). The GitHub repo and the
+> installed binary are both still named `clive`, so you run it as `clive`.
+
 ### From source
 
 ```bash
@@ -96,19 +108,6 @@ git clone https://github.com/SedarOlmez94/clive.git
 cd clive
 cargo install --path .
 ```
-
-### From crates.io
-
-Not yet available. Once published, install with:
-
-```bash
-cargo install clive-llm
-```
-
-The `clive` crate name is already taken by an unrelated project, so Clive will
-publish under the package name `clive-llm` instead. The GitHub repo and the
-installed binary are both still named `clive`. This README will be updated
-once the crates.io release exists.
 
 The binary is installed to (usually):
 
@@ -121,7 +120,7 @@ Make sure `~/.cargo/bin` is on your `PATH`.
 ### Updating
 
 ```bash
-cargo install --path . --force
+cargo install clive-llm --force      # or: cargo install --path . --force
 ```
 
 > **Reinstall after building from source.** The `clive` on your `PATH` is a
@@ -131,7 +130,7 @@ cargo install --path . --force
 ### Uninstalling
 
 ```bash
-cargo uninstall clive
+cargo uninstall clive-llm
 ```
 
 ## One-Terminal Onboarding (Recommended)
@@ -561,7 +560,7 @@ Good first issues are labelled [`good first issue`](https://github.com/SedarOlme
 
 Planned and under consideration (feedback welcome via issues):
 
-- [ ] Publish to crates.io as `clive-llm` (the `clive` name is taken by an unrelated crate; the `clive` binary name is unaffected)
+- [x] Publish to crates.io as `clive-llm` (the `clive` name is taken by an unrelated crate; the `clive` binary name is unaffected)
 - [ ] VS Code Copilot Chat participant (`@clive`) to run the agent workflow with a chosen local model from inside the editor
 - [ ] Configurable model parameters (temperature, context length, `num_ctx`)
 - [ ] Multi-file context in `chat`/`session` (attach files as context)
