@@ -99,11 +99,16 @@ cargo install --path .
 
 ### From crates.io
 
-Not yet available. Clive isn't published to crates.io yet, and the `clive`
-crate name is already taken by an unrelated project, so a future release may
-need to publish under a different crate name (the GitHub repo and `clive`
-binary name will stay the same). This README will be updated once a
-crates.io release exists.
+Not yet available. Once published, install with:
+
+```bash
+cargo install clive-llm
+```
+
+The `clive` crate name is already taken by an unrelated project, so Clive will
+publish under the package name `clive-llm` instead. The GitHub repo and the
+installed binary are both still named `clive`. This README will be updated
+once the crates.io release exists.
 
 The binary is installed to (usually):
 
@@ -556,7 +561,7 @@ Good first issues are labelled [`good first issue`](https://github.com/SedarOlme
 
 Planned and under consideration (feedback welcome via issues):
 
-- [ ] Publish to crates.io (the `clive` name is taken by an unrelated crate, so this may land under a different package name)
+- [ ] Publish to crates.io as `clive-llm` (the `clive` name is taken by an unrelated crate; the `clive` binary name is unaffected)
 - [ ] Configurable model parameters (temperature, context length, `num_ctx`)
 - [ ] Multi-file context in `chat`/`session` (attach files as context)
 - [ ] Prebuilt release binaries via GitHub Releases (no Rust toolchain needed)

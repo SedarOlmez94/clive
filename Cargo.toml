@@ -1,5 +1,5 @@
 [package]
-name = "clive"
+name = "clive-llm"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
@@ -13,6 +13,10 @@ documentation = "https://github.com/SedarOlmez94/clive#readme"
 keywords = ["ollama", "llm", "cli", "ai", "coding-assistant"]
 categories = ["command-line-utilities", "development-tools"]
 exclude = ["target/", "*.bak"]
+
+[[bin]]
+name = "clive"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1"
