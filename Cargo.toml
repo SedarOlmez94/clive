@@ -1,0 +1,32 @@
+[package]
+name = "clive"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A local-first coding-assistant CLI that wraps Ollama, making open-source LLMs easy to chat with, run in sessions, and safely edit code from your terminal."
+authors = ["Sedar Olmez <sedarolmez@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/SedarOlmez94/clive"
+homepage = "https://github.com/SedarOlmez94/clive"
+documentation = "https://github.com/SedarOlmez94/clive#readme"
+keywords = ["ollama", "llm", "cli", "ai", "coding-assistant"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = ["target/", "*.bak"]
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive", "env"] }
+clap_complete = "4"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+similar = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
