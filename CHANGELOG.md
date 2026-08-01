@@ -7,11 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Initial public release preparation: `CODE_OF_CONDUCT.md`, `SECURITY.md`,
-  issue/PR templates, and this changelog.
-
 ## [0.1.0] - 2026-08-01
 
 ### Added
@@ -25,6 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional git safety checks and auto-stage on write.
 - Shell completions for bash, zsh, fish, powershell, and elvish.
 - Persistent configuration for default model, Ollama URL, and system prompt.
+- `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue/PR templates, and this changelog.
+
+### Fixed
+
+- Agent JSON plan extraction now brace-matches the first object (string-aware)
+  instead of taking the last `}`, so trailing model prose no longer breaks
+  parsing.
+- Single-file edit extraction now matches the last `</updated_file>` tag,
+  preventing truncation when file content contains that literal string.
 
 [Unreleased]: https://github.com/SedarOlmez94/clive/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/SedarOlmez94/clive/releases/tag/v0.1.0
