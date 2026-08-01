@@ -1,8 +1,8 @@
+use std::collections::HashMap;
 use std::fs;
 use std::io::{self, BufRead, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus, Stdio};
-use std::collections::HashMap;
 
 use anyhow::{Context, Result, anyhow, bail};
 use clap::{ArgAction, Args, CommandFactory, Parser, Subcommand, ValueEnum};
@@ -626,7 +626,6 @@ fn cmd_config(args: &ConfigArgs) -> Result<()> {
     Ok(())
 }
 
-
 fn resolve_model_name(
     installed_models: &[String],
     local: Option<String>,
@@ -759,7 +758,11 @@ fn cmd_doctor(ollama: &OllamaClient) -> Result<()> {
 
     match config_file_path() {
         Ok(path) => {
-            let exists = if path.exists() { "found" } else { "not created yet" };
+            let exists = if path.exists() {
+                "found"
+            } else {
+                "not created yet"
+            };
             println!("Config:  {} ({exists})", path.display());
         }
         Err(err) => println!("Config:  unavailable ({err})"),
@@ -1039,7 +1042,10 @@ fn cmd_agent(ollama: &OllamaClient, args: AgentArgs, default_model: &Option<Stri
         let mut plan = parse_agent_plan(&response.message.content)?;
 
         if !args.json {
-            println!("\n[agent] Iteration {iteration}/{max_iterations}: {}", plan.summary);
+            println!(
+                "\n[agent] Iteration {iteration}/{max_iterations}: {}",
+                plan.summary
+            );
         }
 
         for edit in plan.edits {
@@ -1060,13 +1066,13 @@ fn cmd_agent(ollama: &OllamaClient, args: AgentArgs, default_model: &Option<Stri
                     reason,
                 } => {
                     let normalized = normalize_file_key(&file);
-                    let target = allowed_map
-                        .get(&normalized)
-                        .ok_or_else(|| anyhow!("Agent attempted to edit disallowed file: {file}"))?;
+                    let target = allowed_map.get(&normalized).ok_or_else(|| {
+                        anyhow!("Agent attempted to edit disallowed file: {file}")
+                    })?;
 
-                    let old = file_map
-                        .get(&target.display().to_string())
-                        .ok_or_else(|| anyhow!("Missing preloaded file content for {}", target.display()))?;
+                    let old = file_map.get(&target.display().to_string()).ok_or_else(|| {
+                        anyhow!("Missing preloaded file content for {}", target.display())
+                    })?;
 
                     if updated_content == *old {
                         continue;
@@ -1091,7 +1097,11 @@ fn cmd_agent(ollama: &OllamaClient, args: AgentArgs, default_model: &Option<Stri
                         }
                     }
                 }
-                AgentAction::AddFile { file, content, reason } => {
+                AgentAction::AddFile {
+                    file,
+                    content,
+                    reason,
+                } => {
                     let normalized = normalize_file_key(&file);
                     let target = allowed_map
                         .get(&normalized)
@@ -1114,7 +1124,10 @@ fn cmd_agent(ollama: &OllamaClient, args: AgentArgs, default_model: &Option<Stri
                     if args.apply {
                         if let Some(parent) = target.parent() {
                             fs::create_dir_all(parent).with_context(|| {
-                                format!("Failed to create parent directory for {}", target.display())
+                                format!(
+                                    "Failed to create parent directory for {}",
+                                    target.display()
+                                )
                             })?;
                         }
 
@@ -1147,9 +1160,8 @@ fn cmd_agent(ollama: &OllamaClient, args: AgentArgs, default_model: &Option<Stri
                     if args.apply {
                         let command_output = run_shell_command(&command)
                             .with_context(|| format!("Failed to run agent command: {command}"))?;
-                        verification_feedback.push_str(&format!(
-                            "\n[agent_command] {command}\n{command_output}\n"
-                        ));
+                        verification_feedback
+                            .push_str(&format!("\n[agent_command] {command}\n{command_output}\n"));
                         applied_in_iteration = true;
                     }
                 }
@@ -1391,9 +1403,15 @@ fn cmd_ollama_pull(ollama: &OllamaClient, args: PullArgs) -> Result<()> {
     println!("Model pull completed: {}", args.model);
 
     if let Ok(tags) = ollama.tags()
-        && let Some(model) = tags.models.into_iter().find(|m| m.name.starts_with(&args.model))
+        && let Some(model) = tags
+            .models
+            .into_iter()
+            .find(|m| m.name.starts_with(&args.model))
     {
-        let size = model.size.map(human_size).unwrap_or_else(|| "unknown".to_string());
+        let size = model
+            .size
+            .map(human_size)
+            .unwrap_or_else(|| "unknown".to_string());
         println!("Installed: {} ({})", model.name, size);
     }
 
@@ -1437,7 +1455,11 @@ fn cmd_ollama_recommend(ollama: &OllamaClient, args: RecommendArgs) -> Result<()
         if args.installed_only && !installed {
             continue;
         }
-        let state = if installed { "installed" } else { "not installed" };
+        let state = if installed {
+            "installed"
+        } else {
+            "not installed"
+        };
         println!("- {model} [{state}]");
         println!("  {note}");
         if !installed {
@@ -1828,7 +1850,9 @@ impl OllamaClient {
 
         if !response.status().is_success() {
             let status = response.status();
-            let body = response.text().unwrap_or_else(|_| "<unreadable body>".to_string());
+            let body = response
+                .text()
+                .unwrap_or_else(|_| "<unreadable body>".to_string());
             bail!("Ollama chat failed: {status} - {body}");
         }
 
@@ -1857,7 +1881,9 @@ impl OllamaClient {
 
         if !response.status().is_success() {
             let status = response.status();
-            let body = response.text().unwrap_or_else(|_| "<unreadable body>".to_string());
+            let body = response
+                .text()
+                .unwrap_or_else(|_| "<unreadable body>".to_string());
             bail!("Ollama stream chat failed: {status} - {body}");
         }
 
@@ -1927,7 +1953,9 @@ impl OllamaClient {
 
         if !response.status().is_success() {
             let status = response.status();
-            let body = response.text().unwrap_or_else(|_| "<unreadable body>".to_string());
+            let body = response
+                .text()
+                .unwrap_or_else(|_| "<unreadable body>".to_string());
             bail!("Ollama tags failed: {status} - {body}");
         }
 
@@ -1950,7 +1978,9 @@ impl OllamaClient {
 
         if !response.status().is_success() {
             let status = response.status();
-            let body = response.text().unwrap_or_else(|_| "<unreadable body>".to_string());
+            let body = response
+                .text()
+                .unwrap_or_else(|_| "<unreadable body>".to_string());
             bail!("Ollama version failed: {status} - {body}");
         }
 
@@ -1977,7 +2007,9 @@ impl OllamaClient {
 
         if !response.status().is_success() {
             let status = response.status();
-            let body = response.text().unwrap_or_else(|_| "<unreadable body>".to_string());
+            let body = response
+                .text()
+                .unwrap_or_else(|_| "<unreadable body>".to_string());
             bail!("Ollama delete failed: {status} - {body}");
         }
 
