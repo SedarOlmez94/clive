@@ -562,6 +562,7 @@ Good first issues are labelled [`good first issue`](https://github.com/SedarOlme
 Planned and under consideration (feedback welcome via issues):
 
 - [ ] Publish to crates.io as `clive-llm` (the `clive` name is taken by an unrelated crate; the `clive` binary name is unaffected)
+- [ ] VS Code Copilot Chat participant (`@clive`) to run the agent workflow with a chosen local model from inside the editor
 - [ ] Configurable model parameters (temperature, context length, `num_ctx`)
 - [ ] Multi-file context in `chat`/`session` (attach files as context)
 - [ ] Prebuilt release binaries via GitHub Releases (no Rust toolchain needed)
