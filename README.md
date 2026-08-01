@@ -2,8 +2,6 @@
 
 ![Clive mascot](docs/clive-mascot.png)
 
-[![Crates.io](https://img.shields.io/crates/v/clive.svg)](https://crates.io/crates/clive)
-[![Downloads](https://img.shields.io/crates/d/clive.svg)](https://crates.io/crates/clive)
 [![CI](https://github.com/SedarOlmez94/clive/actions/workflows/ci.yml/badge.svg)](https://github.com/SedarOlmez94/clive/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org/)
@@ -64,8 +62,8 @@ workflows — all running on your own machine, with no data leaving your compute
 ## Quick Start
 
 ```bash
-# 1. Install Clive (from crates.io once published, or from source)
-cargo install clive          # or: cargo install --path .
+# 1. Install Clive from source (not yet published to crates.io)
+cargo install --path .
 
 # 2. Start Ollama in the background
 clive ollama serve --detach
@@ -91,12 +89,6 @@ You do not need a separate terminal for Ollama setup once Clive is installed.
 
 ## Installation
 
-### From crates.io (recommended once published)
-
-```bash
-cargo install clive
-```
-
 ### From source
 
 ```bash
@@ -104,6 +96,14 @@ git clone https://github.com/SedarOlmez94/clive.git
 cd clive
 cargo install --path .
 ```
+
+### From crates.io
+
+Not yet available. Clive isn't published to crates.io yet, and the `clive`
+crate name is already taken by an unrelated project, so a future release may
+need to publish under a different crate name (the GitHub repo and `clive`
+binary name will stay the same). This README will be updated once a
+crates.io release exists.
 
 The binary is installed to (usually):
 
@@ -116,7 +116,7 @@ Make sure `~/.cargo/bin` is on your `PATH`.
 ### Updating
 
 ```bash
-cargo install clive --force      # or: cargo install --path . --force
+cargo install --path . --force
 ```
 
 > **Reinstall after building from source.** The `clive` on your `PATH` is a
@@ -556,6 +556,7 @@ Good first issues are labelled [`good first issue`](https://github.com/SedarOlme
 
 Planned and under consideration (feedback welcome via issues):
 
+- [ ] Publish to crates.io (the `clive` name is taken by an unrelated crate, so this may land under a different package name)
 - [ ] Configurable model parameters (temperature, context length, `num_ctx`)
 - [ ] Multi-file context in `chat`/`session` (attach files as context)
 - [ ] Prebuilt release binaries via GitHub Releases (no Rust toolchain needed)
